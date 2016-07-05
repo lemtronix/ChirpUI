@@ -24,6 +24,10 @@ public class MainFrame extends JFrame implements Observer {
 		
 		setLayout(new BorderLayout());
 		
+		// Waveform Panel
+		// Values Panel
+		// Comms Panel
+		
 		commsPanel = new CommsPanel();
 		waveformPanel = new WaveformPanel();
 		statusPanel = new StatusPanel();
@@ -58,10 +62,4 @@ public class MainFrame extends JFrame implements Observer {
 			System.out.println("View sees some other event...");
 		}
 	}
-
-	// Waveform Panel
-	
-	// Values Panel
-	
-	// Comms Panel
 }
