@@ -1,8 +1,8 @@
 package controller;
 
 public enum WaveformType {
-	Off,
-	Sine,
-	Square,
-	Triangle,
+    Off,
+    Sine,
+    Square,
+    Triangle,
 }

@@ -1,7 +1,7 @@
 package controller;
 
 public interface Observable {
-	
-	public void SetObserver(Observer Observer);
-	
+    
+    public void SetObserver(Observer Observer);
+    
 }

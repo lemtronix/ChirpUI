@@ -15,24 +15,24 @@ import javax.swing.JPanel;
 
 public class CommsPanel extends JPanel {
 
-	private JComboBox<String> commComboBox;
-	private JLabel commPortText = new JLabel("Comm Port:");
-	
-	public CommsPanel()
-	{
-		commComboBox = new JComboBox<String>();
-		
-		DefaultComboBoxModel<String> commModel = new DefaultComboBoxModel<String>();
-		commModel.addElement("Com1");
-		commModel.addElement("Com2");
-		commModel.addElement("Com3");
-		commModel.addElement("Com4");
-		
-		commComboBox.setModel(commModel);
-		commComboBox.setSelectedIndex(0);
-		
-		add(commPortText);
-		add(commComboBox);
-	}
+    private JComboBox<String> commComboBox;
+    private JLabel commPortText = new JLabel("Comm Port:");
+    
+    public CommsPanel()
+    {
+        commComboBox = new JComboBox<String>();
+        
+        DefaultComboBoxModel<String> commModel = new DefaultComboBoxModel<String>();
+        commModel.addElement("Com1");
+        commModel.addElement("Com2");
+        commModel.addElement("Com3");
+        commModel.addElement("Com4");
+        
+        commComboBox.setModel(commModel);
+        commComboBox.setSelectedIndex(0);
+        
+        add(commPortText);
+        add(commComboBox);
+    }
 
 }

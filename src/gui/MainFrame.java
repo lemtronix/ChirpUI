@@ -12,54 +12,55 @@ import controller.Observer;
 
 public class MainFrame extends JFrame implements Observer {
 
-	private Controller controller;
-	
-	private CommsPanel commsPanel;
-	private WaveformPanel waveformPanel;
-	private StatusPanel statusPanel;
-	
-	public MainFrame()
-	{
-		super("Chirp");
-		
-		setLayout(new BorderLayout());
-		
-		// Waveform Panel
-		// Values Panel
-		// Comms Panel
-		
-		commsPanel = new CommsPanel();
-		waveformPanel = new WaveformPanel();
-		statusPanel = new StatusPanel();
-		
-		add(commsPanel, BorderLayout.WEST);
-		
-		setMinimumSize(new Dimension(500, 400));
-        setSize(500, 400);
+    private Controller controller;
+    
+    private CommsPanel commsPanel;
+    private WaveformPanel waveformPanel;
+    private StatusPanel statusPanel;
+    
+    public MainFrame()
+    {
+        super("Chirp");
+        
+        setLayout(new BorderLayout());
+        
+        // Waveform Panel
+        // Values Panel
+        // Comms Panel
+        
+        commsPanel = new CommsPanel();
+        waveformPanel = new WaveformPanel();
+        statusPanel = new StatusPanel();
+        
+        add(commsPanel, BorderLayout.WEST);
+        add(waveformPanel, BorderLayout.CENTER);
+        
+        setMinimumSize(new Dimension(600, 200));
+        setSize(600, 200);
 
         setVisible(true);
-	}
-	
-	public void SetController(Controller controller)
-	{
-		if (controller != null)
-		{
-			this.controller = controller;
-			
-			// Tell the controller we're interested in events
-			controller.RegisterObserver(this);
-		}
-	}
-	@Override
-	public void EventOccurred(GeneratorEvent g) {
-		
-		if (g.GetEventTypeThatOccurred() == EventType.FrequencyEvent)
-		{			
-			System.out.println("View sees that the frequency value is: " + controller.GetFrequnecy());
-		}
-		else
-		{
-			System.out.println("View sees some other event...");
-		}
-	}
+    }
+    
+    public void SetController(Controller controller)
+    {
+        if (controller != null)
+        {
+            this.controller = controller;
+            
+            // Tell the controller we're interested in events
+            controller.RegisterObserver(this);
+        }
+    }
+    @Override
+    public void EventOccurred(GeneratorEvent g) {
+        
+        if (g.GetEventTypeThatOccurred() == EventType.FrequencyEvent)
+        {           
+            System.out.println("View sees that the frequency value is: " + controller.GetFrequnecy());
+        }
+        else
+        {
+            System.out.println("View sees some other event...");
+        }
+    }
 }

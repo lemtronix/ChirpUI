@@ -1,8 +1,8 @@
 package controller;
 
 public enum EventType {
-	FrequencyEvent,
-	VoltageEvent,
-	PhaseEvent,
-	WaveformEvent,
+    FrequencyEvent,
+    VoltageEvent,
+    PhaseEvent,
+    WaveformEvent,
 }
