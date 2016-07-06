@@ -20,7 +20,7 @@ public class MainFrame extends JFrame implements Observer {
     
     public MainFrame()
     {
-        super("Chirp");
+        super("Chirp - Waveform Generator");
         
         setLayout(new BorderLayout());
         
@@ -32,11 +32,11 @@ public class MainFrame extends JFrame implements Observer {
         waveformPanel = new WaveformPanel();
         statusPanel = new StatusPanel();
         
-        add(commsPanel, BorderLayout.WEST);
+        add(commsPanel, BorderLayout.SOUTH);
         add(waveformPanel, BorderLayout.CENTER);
         
-        setMinimumSize(new Dimension(600, 200));
-        setSize(600, 200);
+        setMinimumSize(new Dimension(400, 300));
+        setSize(400, 300);
 
         setVisible(true);
     }
@@ -51,6 +51,7 @@ public class MainFrame extends JFrame implements Observer {
             controller.RegisterObserver(this);
         }
     }
+    
     @Override
     public void EventOccurred(GeneratorEvent g) {
         
