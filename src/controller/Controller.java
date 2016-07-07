@@ -6,33 +6,38 @@ import gui.MainFrame;
 
 public class Controller {
 
-    private MainFrame MainPanel = new MainFrame();
-    private FrequencyGenerator Chirp = new FrequencyGenerator();
+    private MainFrame mainFrame = new MainFrame();
+    private FrequencyGenerator chirp = new FrequencyGenerator();
     
     public Controller()
     {
-        MainPanel.SetController(this);
+        mainFrame.SetController(this);
         
-        // @todo test code
+        // TODO test code
         System.out.println("Controller hard coded test code...");
-        Chirp.SetFrequency(100);
+        chirp.SetFrequency(100);
     }
     
-    public void RegisterObserver(Observer observer)
+    public void RegisterObserver(FrequencyGeneratorListener listener)
     {
-        if (observer != null)
+        if (listener != null)
         {
-            Chirp.SetObserver(observer);
+            chirp.AddListener(listener);
         }
     }
     
     public void SetFrequency(int Frequency)
     {
-        Chirp.SetFrequency(Frequency);
+        chirp.SetFrequency(Frequency);
+    }
+    
+    public void SetVoltage(int Voltage)
+    {
+        chirp.SetVoltage(Voltage);
     }
     
     public int GetFrequnecy()
     {
-        return Chirp.GetFrequency();
+        return chirp.GetFrequency();
     }
 }

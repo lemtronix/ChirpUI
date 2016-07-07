@@ -7,10 +7,10 @@ import javax.swing.JFrame;
 
 import controller.Controller;
 import controller.EventType;
+import controller.FrequencyGeneratorListener;
 import controller.GeneratorEvent;
-import controller.Observer;
 
-public class MainFrame extends JFrame implements Observer {
+public class MainFrame extends JFrame implements FrequencyGeneratorListener {
 
     private Controller controller;
     
@@ -35,8 +35,8 @@ public class MainFrame extends JFrame implements Observer {
         add(commsPanel, BorderLayout.SOUTH);
         add(waveformPanel, BorderLayout.CENTER);
         
-        setMinimumSize(new Dimension(400, 300));
-        setSize(400, 300);
+        setMinimumSize(new Dimension(300, 300));
+        setSize(300, 300);
 
         setVisible(true);
     }
@@ -53,8 +53,8 @@ public class MainFrame extends JFrame implements Observer {
     }
     
     @Override
-    public void EventOccurred(GeneratorEvent g) {
-        
+    public void FrequencyGeneratorEventOccurred(GeneratorEvent g)
+    {
         if (g.GetEventTypeThatOccurred() == EventType.FrequencyEvent)
         {           
             System.out.println("View sees that the frequency value is: " + controller.GetFrequnecy());

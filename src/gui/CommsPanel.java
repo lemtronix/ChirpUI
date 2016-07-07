@@ -32,11 +32,12 @@ public class CommsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //@todo
+                // TODO replace with implementation
                 System.out.println("Auto detection clicked");
             }
         });
-        // @todo Auto detection of Com ports
+        
+        // TODO Auto detection of Com ports
         commComboBox = new JComboBox<String>();
         
         DefaultComboBoxModel<String> commModel = new DefaultComboBoxModel<String>();

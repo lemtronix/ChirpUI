@@ -71,7 +71,7 @@ public class WaveformPanel extends JPanel {
         frequencySlider.setMinorTickSpacing(100000);
         frequencySlider.setPaintTicks(true);
         frequencySlider.setPaintLabels(false);
-        // @todo bounded range model?
+        // TODO bounded range model?
         
         // Should update the text box, 
         frequencySlider.addChangeListener(new ChangeListener()
@@ -88,7 +88,7 @@ public class WaveformPanel extends JPanel {
                 // But only send the command when no longer adjusting
                 if (frequencySlider.getValueIsAdjusting() == false)
                 {
-                    // @todo this should actually send the command
+                    // TODO this should actually send the command
                     System.out.println("Sending frequency command value: " + frequencySlider.getValue());
                 }
             }
@@ -117,7 +117,7 @@ public class WaveformPanel extends JPanel {
         amplitudeSlider.setMinorTickSpacing(1);
         amplitudeSlider.setPaintTicks(true);
         amplitudeSlider.setPaintLabels(false);
-        // @todo bounded range model?
+        // TODO bounded range model?
         
         amplitudeSlider.addChangeListener(new ChangeListener()
         {
@@ -133,7 +133,7 @@ public class WaveformPanel extends JPanel {
                 // But only send the command when no longer adjusting
                 if (amplitudeSlider.getValueIsAdjusting() == false)
                 {
-                    // @todo this should actually send the command
+                    // TODO this should actually send the command
                     System.out.println("Sending amplitude command value: " + amplitudeSlider.getValue());
                 }
             }
@@ -209,7 +209,7 @@ public class WaveformPanel extends JPanel {
         // weight determines how bunched objects should be together; higher
         // number = more breathing room between components.
         gc.weightx = 1;
-        gc.weighty = 0.1;
+        gc.weighty = 1;
         
         /// FIRST ROW ///
         gc.gridy = 0;
@@ -264,6 +264,7 @@ public class WaveformPanel extends JPanel {
         
         /// NEXT ROW ///
         gc.gridy++;
+        gc.weighty = 0.1;
         gc.fill = GridBagConstraints.NONE;
         
         gc.gridx = 0;
@@ -273,6 +274,7 @@ public class WaveformPanel extends JPanel {
         
         gc.gridx++;
         gc.anchor = GridBagConstraints.LINE_START;
+        gc.insets = new Insets(0, 0, 5, 0);
         add(offButton, gc);
         
         /// NEXT ROW ///
@@ -292,5 +294,15 @@ public class WaveformPanel extends JPanel {
         
         gc.gridx = 1;
         add(squareWaveButton, gc);
+        
+        /// EMPTY ROW ///
+        gc.gridy++;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.gridx = 0;
+        gc.weightx = 1;
+        
+        gc.weighty = 1;
+        gc.gridwidth = 2;
+        add(new JSeparator(JSeparator.HORIZONTAL), gc);
     }
 }
