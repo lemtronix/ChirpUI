@@ -6,18 +6,18 @@ import gui.MainFrame;
 
 public class Controller {
 
-    private MainFrame mainFrame = new MainFrame();
-    private FrequencyGenerator chirp = new FrequencyGenerator();
+    private MainFrame mainFrame;
+    private FrequencyGenerator chirp;
     
     public Controller()
     {
-        mainFrame.SetController(this);
+        mainFrame = new MainFrame();
+        chirp = new FrequencyGenerator();
         
-        // TODO test code
-        System.out.println("Controller hard coded test code...");
-        chirp.SetFrequency(100);
+        mainFrame.SetController(this);
     }
     
+    // TODO will this ever be used?  Helpful for sending messages back to the GUI from the frequency generator
     public void RegisterObserver(FrequencyGeneratorListener listener)
     {
         if (listener != null)

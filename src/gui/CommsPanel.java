@@ -16,8 +16,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class CommsPanel extends JPanel {
+import controller.Controller;
 
+public class CommsPanel extends JPanel implements Controllable {
+
+    private Controller controller;
     private JComboBox<String> commComboBox;
     private JLabel commPortText;
     private JButton autoDetectButton;
@@ -32,7 +35,7 @@ public class CommsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                // TODO replace with implementation
+                // TODO replace with auto detection implementation
                 System.out.println("Auto detection clicked");
             }
         });
@@ -40,6 +43,7 @@ public class CommsPanel extends JPanel {
         // TODO Auto detection of Com ports
         commComboBox = new JComboBox<String>();
         
+        // TODO selection of com ports is not implemented
         DefaultComboBoxModel<String> commModel = new DefaultComboBoxModel<String>();
         commModel.addElement("Com1");
         commModel.addElement("Com2");
@@ -61,6 +65,15 @@ public class CommsPanel extends JPanel {
         add(commPortText);
         add(commComboBox);
         add(autoDetectButton);
+    }
+
+    @Override
+    public void SetController(Controller controller)
+    {
+        if (controller != null)
+        {
+            this.controller = controller;
+        }
     }
 
 }

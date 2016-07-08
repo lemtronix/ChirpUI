@@ -10,7 +10,7 @@ import controller.EventType;
 import controller.FrequencyGeneratorListener;
 import controller.GeneratorEvent;
 
-public class MainFrame extends JFrame implements FrequencyGeneratorListener {
+public class MainFrame extends JFrame implements FrequencyGeneratorListener, Controllable {
 
     private Controller controller;
     
@@ -23,10 +23,6 @@ public class MainFrame extends JFrame implements FrequencyGeneratorListener {
         super("Chirp - Waveform Generator");
         
         setLayout(new BorderLayout());
-        
-        // Waveform Panel
-        // Values Panel
-        // Comms Panel
         
         commsPanel = new CommsPanel();
         waveformPanel = new WaveformPanel();
@@ -41,11 +37,17 @@ public class MainFrame extends JFrame implements FrequencyGeneratorListener {
         setVisible(true);
     }
     
+    @Override
     public void SetController(Controller controller)
     {
         if (controller != null)
         {
+            // TODO possible enhancement is to have only the mainframe communicate with the controller instead of passing the controller around everywhere
+            // This could be accomplished by observer-listener within the different views
+            
             this.controller = controller;
+            commsPanel.SetController(controller);
+            waveformPanel.SetController(controller);
             
             // Tell the controller we're interested in events
             controller.RegisterObserver(this);

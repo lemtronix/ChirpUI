@@ -17,7 +17,12 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class WaveformPanel extends JPanel {
+import controller.Controller;
+
+public class WaveformPanel extends JPanel implements Controllable {
+    
+    private Controller controller;
+    
     private static final int FREQ_MIN = 0;
     private static final int FREQ_MAX = 8000000;
     private static final int FREQ_INIT = 0;
@@ -47,7 +52,7 @@ public class WaveformPanel extends JPanel {
     // Radio buttons for field
     // JSeparator?
     public WaveformPanel()
-    {
+    {        
         // Frequency Slider
         frequencyField = new JTextField(10);
         frequencyField.setText("0");
@@ -88,8 +93,12 @@ public class WaveformPanel extends JPanel {
                 // But only send the command when no longer adjusting
                 if (frequencySlider.getValueIsAdjusting() == false)
                 {
-                    // TODO this should actually send the command
-                    System.out.println("Sending frequency command value: " + frequencySlider.getValue());
+                    int frequencyValue = frequencySlider.getValue();
+                    
+                    // TODO debug
+                    System.out.println("Sending frequency command value: " + frequencyValue);
+                    
+                    SendFrequency(frequencyValue);
                 }
             }
         });
@@ -133,8 +142,12 @@ public class WaveformPanel extends JPanel {
                 // But only send the command when no longer adjusting
                 if (amplitudeSlider.getValueIsAdjusting() == false)
                 {
-                    // TODO this should actually send the command
-                    System.out.println("Sending amplitude command value: " + amplitudeSlider.getValue());
+                    int amplitudeValue = amplitudeSlider.getValue();
+
+                    // TODO debug only
+                    System.out.println("Sending amplitude command value: " + amplitudeValue);
+                    
+                    SendAmplitude(amplitudeValue);
                 }
             }
         });
@@ -304,5 +317,24 @@ public class WaveformPanel extends JPanel {
         gc.weighty = 1;
         gc.gridwidth = 2;
         add(new JSeparator(JSeparator.HORIZONTAL), gc);
+    }
+
+    @Override
+    public void SetController(Controller controller)
+    {
+        if (controller != null)
+        {
+            this.controller = controller;
+        }
+    }
+    
+    private void SendFrequency(int newFrequency)
+    {
+        controller.SetFrequency(newFrequency);
+    }
+    
+    private void SendAmplitude(int newAmplitude)
+    {
+        controller.SetVoltage(newAmplitude);
     }
 }
