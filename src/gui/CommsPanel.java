@@ -20,6 +20,7 @@ import controller.Controller;
 
 public class CommsPanel extends JPanel implements Controllable {
 
+	private static final int offset = 1;
     private Controller controller;
     private JComboBox<String> commComboBox;
     private JLabel commPortText;
@@ -55,7 +56,8 @@ public class CommsPanel extends JPanel implements Controllable {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("Com" + commComboBox.getSelectedIndex() +" selected");
+            	int commPortValue = commComboBox.getSelectedIndex()+offset;
+                System.out.println("Com" + commPortValue +" selected");
             }
         });
         
