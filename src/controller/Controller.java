@@ -36,8 +36,15 @@ public class Controller {
         chirp.SetVoltage(Voltage);
     }
     
+    public void SetWaveform(WaveformType Waveform)
+    {
+        chirp.SetWaveform(Waveform);
+    }
+    
     public int GetFrequnecy()
     {
         return chirp.GetFrequency();
     }
+    
+    
 }

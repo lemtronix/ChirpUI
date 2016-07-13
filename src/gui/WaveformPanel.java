@@ -18,6 +18,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import controller.Controller;
+import controller.WaveformType;
 
 public class WaveformPanel extends JPanel implements Controllable {
     
@@ -29,9 +30,9 @@ public class WaveformPanel extends JPanel implements Controllable {
     private static final int FREQ_SCALE = 1;
     
     private static final int AMP_MIN = 0;
-    private static final int AMP_MAX = 50;
+    private static final int AMP_MAX = 4000;
     private static final int AMP_INIT = 0;
-    private static final int AMP_SCALE = 10;
+    private static final int AMP_SCALE = 1000;
             
     private JSlider frequencySlider;
     private JSlider amplitudeSlider;
@@ -48,6 +49,7 @@ public class WaveformPanel extends JPanel implements Controllable {
     private static final String sineWaveString = "Sine";
     private static final String triangleWaveString = "Triangle";
     private static final String squareWaveString = "Square";
+    //private static final String squareWaveDiv2String = "Square";
     
     // Radio buttons for field
     // JSeparator?
@@ -122,8 +124,8 @@ public class WaveformPanel extends JPanel implements Controllable {
         });
         
         amplitudeSlider = new JSlider(JSlider.HORIZONTAL, AMP_MIN, AMP_MAX, AMP_INIT);
-        amplitudeSlider.setMajorTickSpacing(10);
-        amplitudeSlider.setMinorTickSpacing(1);
+        amplitudeSlider.setMajorTickSpacing(AMP_SCALE);
+        amplitudeSlider.setMinorTickSpacing(AMP_SCALE/10);
         amplitudeSlider.setPaintTicks(true);
         amplitudeSlider.setPaintLabels(false);
         // TODO bounded range model?
@@ -160,6 +162,7 @@ public class WaveformPanel extends JPanel implements Controllable {
             public void actionPerformed(ActionEvent e)
             {
                 System.out.println("Off selected.");
+                controller.SetWaveform(WaveformType.Off);
                 
             }
         });
@@ -171,6 +174,7 @@ public class WaveformPanel extends JPanel implements Controllable {
             public void actionPerformed(ActionEvent e)
             {
                 System.out.println("Sine wave selected.");
+                controller.SetWaveform(WaveformType.Sine);
                 
             }
         });
@@ -182,6 +186,7 @@ public class WaveformPanel extends JPanel implements Controllable {
             public void actionPerformed(ActionEvent e)
             {
                 System.out.println("Triangle wave selected.");
+                controller.SetWaveform(WaveformType.Triangle);
                 
             }
         });
@@ -193,6 +198,7 @@ public class WaveformPanel extends JPanel implements Controllable {
             public void actionPerformed(ActionEvent e)
             {
                 System.out.println("Square wave selected.");
+                controller.SetWaveform(WaveformType.Square);
                 
             }
         });

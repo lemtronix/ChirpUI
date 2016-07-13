@@ -10,6 +10,7 @@ import controller.EventType;
 import controller.FrequencyGeneratorListener;
 import controller.GeneratorEvent;
 import controller.WaveformType;
+
 import gnu.io.CommPort;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -141,7 +142,7 @@ public class FrequencyGenerator
     {
         System.out.println("New frequency is: " + newFrequency);
         
-        String setFrequencyCommand = new String("F" + newFrequency + "\n\r");
+        String setFrequencyCommand = new String("F" + newFrequency);
         
         SendCommand(setFrequencyCommand);
         
@@ -157,7 +158,7 @@ public class FrequencyGenerator
     public void SetVoltage(int newVoltage)
     {
         System.out.println("New voltage is: " + newVoltage);
-        String setVoltageCommand = new String("V" + newVoltage + "\n\r");
+        String setVoltageCommand = new String("A" + newVoltage);
         
         SendCommand(setVoltageCommand);
         
@@ -176,6 +177,54 @@ public class FrequencyGenerator
         }
     }
 
+    public void SetWaveform(WaveformType requestedWaveform)
+    {
+        System.out.println("Setting Waveform...");
+        
+        WaveformType previousWaveform = this.waveform;
+        
+        switch (requestedWaveform)
+        {
+            case Off:
+                if (previousWaveform != WaveformType.Off)
+                {
+                    // Turn the waveform off by sending the command and remembering the state
+                    OutputDisable();
+                }
+            break;
+            case Sine:
+                if (previousWaveform != WaveformType.Sine)
+                {
+                    SendCommand(new String("wsin"));
+                }
+            break;
+            case Triangle:
+                if (previousWaveform != WaveformType.Triangle)
+                {
+                    SendCommand(new String("wtri"));
+                }
+            break;
+            case Square:
+                if (previousWaveform != WaveformType.Square)
+                {
+                    SendCommand(new String("wsq"));
+                }
+            break;
+            default:
+                System.err.println("Invalid waveform sent!");
+            break;
+        }
+        
+        // Requested waveform requested not off but the current state but only enable if it was previously off
+        if (requestedWaveform != WaveformType.Off && previousWaveform == WaveformType.Off)
+        {
+            // Turn the waveform on by sending the command and remembering the state
+            OutputEnable();
+        }
+        
+        this.waveform = requestedWaveform;
+    }
+    
     public int GetFrequency()
     {
         return frequency;
@@ -190,12 +239,25 @@ public class FrequencyGenerator
     {
         try
         {
+            String LineFeed = new String("\n\r");
+            
             // Sends the frequency set command on the serial port
             outputStream.write(command.getBytes(), 0, command.length());
+            outputStream.write(LineFeed.getBytes(), 0, LineFeed.length());
         }
-        catch (IOException e )
+        catch (IOException e)
         {
             System.err.println(e.toString());
         }
+    }
+    
+    private void OutputEnable()
+    {
+        SendCommand(new String("O"));
+    }
+    
+    private void OutputDisable()
+    {
+        SendCommand(new String("o"));
     }
 }
