@@ -21,7 +21,7 @@ public class FrequencyGenerator
 {
 //    private static final String PORT_NAMES[] = { "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "COM10", "COM11",
 //            "COM12", "COM13", "COM14", "COM15", };
-    private static final String PORT_NAMES[] = { "COM10" };
+    private static final String PORT_NAMES[] = { "COM14" };
     
 
     // TODO move this into its own class
@@ -29,7 +29,7 @@ public class FrequencyGenerator
     private BufferedReader inputStream; // A BufferedReader which will be fed by a InputStreamReader converting the bytes into characters making the displayed results code page independent
     private OutputStream outputStream; // The output stream to the port
     private static final int TIME_OUT = 2000; // Milliseconds to block while waiting for port open
-    private static final int DATA_RATE = 9600; // Default bits per second for COM port.
+    private static final int DATA_RATE = 57600; // Default bits per second for COM port.
     private static final int BUFFER_SIZE = 128;
     private byte[] buffer = new byte[BUFFER_SIZE];
     private int numberOfChars = 0;
@@ -97,24 +97,19 @@ public class FrequencyGenerator
 
                             if ((charReceived = inputStream.read()) > -1)
                             {
-                                if (charReceived == '\n' || charReceived == '\r' || numberOfChars >= BUFFER_SIZE)
+                                buffer[numberOfChars] = (byte) charReceived;
+                                numberOfChars++;
+                                
+                                // TODO debug only ... was + || charReceived == '\r' ||
+                                if (charReceived == '\n' || numberOfChars >= BUFFER_SIZE)
                                 {
                                     // Finish the sequence with a \N to indicate a new line
-                                    System.out.println("\\N");
+                                    // System.out.println("\\N");
                                     
                                     // Newline character received or buffer at limit then exit
-                                    System.out.println(new String(buffer, 0, numberOfChars));
+                                    // System.out.println(new String(buffer, 0, numberOfChars));
+                                    System.out.print(new String(buffer, 0, numberOfChars));
                                     numberOfChars = 0;
-                                }
-                                else
-                                {
-                                    // TODO make this debug only
-                                    // Print a dot for every character received
-                                    System.out.print(".");
-                                    
-                                    // Store the value in the buffer
-                                    buffer[numberOfChars] = (byte) charReceived;
-                                    numberOfChars++;
                                 }
                             }
 
@@ -140,9 +135,9 @@ public class FrequencyGenerator
 
     public void SetFrequency(int newFrequency)
     {
-        System.out.println("New frequency is: " + newFrequency);
+        // System.out.println("New frequency is: " + newFrequency);
         
-        String setFrequencyCommand = new String("F" + newFrequency);
+        String setFrequencyCommand = new String("f" + newFrequency);
         
         SendCommand(setFrequencyCommand);
         
@@ -157,8 +152,8 @@ public class FrequencyGenerator
     
     public void SetVoltage(int newVoltage)
     {
-        System.out.println("New voltage is: " + newVoltage);
-        String setVoltageCommand = new String("A" + newVoltage);
+        // System.out.println("New voltage is: " + newVoltage);
+        String setVoltageCommand = new String("a" + newVoltage);
         
         SendCommand(setVoltageCommand);
         
@@ -178,9 +173,7 @@ public class FrequencyGenerator
     }
 
     public void SetWaveform(WaveformType requestedWaveform)
-    {
-        System.out.println("Setting Waveform...");
-        
+    {        
         WaveformType previousWaveform = this.waveform;
         
         switch (requestedWaveform)
@@ -239,7 +232,8 @@ public class FrequencyGenerator
     {
         try
         {
-            String LineFeed = new String("\n\r");
+            // TODO still needed? was \n\r
+            String LineFeed = new String("\n");
             
             // Sends the frequency set command on the serial port
             outputStream.write(command.getBytes(), 0, command.length());
