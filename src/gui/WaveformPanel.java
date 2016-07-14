@@ -156,6 +156,7 @@ public class WaveformPanel extends JPanel implements Controllable {
         
         // Waveform buttons
         offButton = new JRadioButton(offString);
+        offButton.setSelected(true);
         offButton.addActionListener(new ActionListener()
         {
             @Override
