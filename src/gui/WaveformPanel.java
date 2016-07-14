@@ -98,7 +98,7 @@ public class WaveformPanel extends JPanel implements Controllable {
                     int frequencyValue = frequencySlider.getValue();
                     
                     // TODO debug
-                    System.out.println("Sending frequency command value: " + frequencyValue);
+                    // System.out.println("Sending frequency command value: " + frequencyValue);
                     
                     SendFrequency(frequencyValue);
                 }
@@ -147,7 +147,7 @@ public class WaveformPanel extends JPanel implements Controllable {
                     int amplitudeValue = amplitudeSlider.getValue();
 
                     // TODO debug only
-                    System.out.println("Sending amplitude command value: " + amplitudeValue);
+                    // System.out.println("Sending amplitude command value: " + amplitudeValue);
                     
                     SendAmplitude(amplitudeValue);
                 }
@@ -161,7 +161,7 @@ public class WaveformPanel extends JPanel implements Controllable {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("Off selected.");
+//                System.out.println("Off selected.");
                 controller.SetWaveform(WaveformType.Off);
                 
             }
@@ -173,7 +173,7 @@ public class WaveformPanel extends JPanel implements Controllable {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("Sine wave selected.");
+                //System.out.println("Sine wave selected.");
                 controller.SetWaveform(WaveformType.Sine);
                 
             }
@@ -185,7 +185,7 @@ public class WaveformPanel extends JPanel implements Controllable {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("Triangle wave selected.");
+//                System.out.println("Triangle wave selected.");
                 controller.SetWaveform(WaveformType.Triangle);
                 
             }
@@ -197,7 +197,7 @@ public class WaveformPanel extends JPanel implements Controllable {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("Square wave selected.");
+//                System.out.println("Square wave selected.");
                 controller.SetWaveform(WaveformType.Square);
                 
             }
