@@ -5,25 +5,29 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import controller.EventType;
 import controller.FrequencyGeneratorListener;
 import controller.GeneratorEvent;
 import controller.WaveformType;
-
 import gnu.io.CommPort;
+import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import gnu.io.CommPortIdentifier;
 
-public class FrequencyGenerator
+public class FrequencyGenerator implements SerialPortEventListener
 {
 //    private static final String PORT_NAMES[] = { "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "COM10", "COM11",
 //            "COM12", "COM13", "COM14", "COM15", };
-    private static final String PORT_NAMES[] = { "COM14" };
+    private static final String PORT_NAMES[] = { "COM8" };
     
-
+    private HashSet<String> comNameHashSet;
+    private HashSet<CommPortIdentifier> comHashSet;
+    
     // TODO move this into its own class
     private SerialPort serialPort;
     private BufferedReader inputStream; // A BufferedReader which will be fed by a InputStreamReader converting the bytes into characters making the displayed results code page independent
@@ -46,34 +50,72 @@ public class FrequencyGenerator
 
     public FrequencyGenerator()
     {
-        CommPortIdentifier portId = null;
-        Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier.getPortIdentifiers();
+    	comNameHashSet = new HashSet<String>();
+    	comHashSet = new HashSet<CommPortIdentifier>();
+    	
+    	Enumeration<CommPortIdentifier> thePorts = CommPortIdentifier.getPortIdentifiers();
+    	
+    	while (thePorts.hasMoreElements())
+    	{
+    		CommPortIdentifier com = thePorts.nextElement();
 
-        // First, Find an instance of serial port as set in PORT_NAMES.
-        while (portEnum.hasMoreElements())
-        {
-            CommPortIdentifier currPortId = portEnum.nextElement();
+    		// We're only interested in serial ports    		
+    		if (com.getPortType() == CommPortIdentifier.PORT_SERIAL)
+    		{
+    			// Try to open and close the com port, if successful, then add it to the hash set
+    			try
+    			{
+    				CommPort comPort = com.open("CommUtil", 50);
+    				comPort.close();
+    				comNameHashSet.add(com.getName());
+    				comHashSet.add(com);
+    			}
+    			catch (PortInUseException e)
+    			{
+    				System.out.println("Port: " + com.getName() + "is in use.");
+    			}
+    			catch (Exception e)
+    			{
+    				System.err.println("Failed to open port: " + com.getName());
+    				e.printStackTrace();
+    			}
+    		}
+    	}
+    }
+    
+    public HashSet<String> getAvailableSerialPorts()
+    {
+    	return comNameHashSet;
+    }
 
-            for (String portName : PORT_NAMES)
-            {
-                if (currPortId.getName().equals(portName))
-                {
-                    portId = currPortId;
-                    break;
-                }
-            }
-        }
-
-        if (portId == null)
-        {
-            System.out.println("Could not find COM port.");
-            return;
-        }
-
+    public void setSerialPort(String comName)
+    {
+    	CommPortIdentifier comFound = null;
+    	
+    	Iterator<CommPortIdentifier> itr = comHashSet.iterator();
+    	
+    	// Look for the specified serial port in the has set
+    	while (itr.hasNext())
+    	{
+    		CommPortIdentifier comInHash = itr.next();
+    		
+    		if (comInHash.getName().equals(comName))
+    		{
+    			// We have a string match
+    			comFound = comInHash;
+    			break;
+    		}
+    	}
+    	
+    	if (comFound == null)
+    	{
+    		System.out.println("Could not find COM port.");
+    	}
+    	
         try
         {
             // open serial port, and use class name for the appName.
-            serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
+            serialPort = (SerialPort) comFound.open(this.getClass().getName(), TIME_OUT);
 
             // set port parameters
             serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
@@ -83,48 +125,10 @@ public class FrequencyGenerator
             outputStream = serialPort.getOutputStream();
 
             // add event listeners
-            serialPort.addEventListener(new SerialPortEventListener()
-            {
-                
-                @Override
-                public void serialEvent(SerialPortEvent oEvent)
-                {
-                    if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE)
-                    {
-                        try 
-                        {
-                            int charReceived = 0;
-
-                            if ((charReceived = inputStream.read()) > -1)
-                            {
-                                buffer[numberOfChars] = (byte) charReceived;
-                                numberOfChars++;
-                                
-                                // TODO debug only ... was + || charReceived == '\r' ||
-                                if (charReceived == '\n' || numberOfChars >= BUFFER_SIZE)
-                                {
-                                    // Finish the sequence with a \N to indicate a new line
-                                    // System.out.println("\\N");
-                                    
-                                    // Newline character received or buffer at limit then exit
-                                    // System.out.println(new String(buffer, 0, numberOfChars));
-                                    System.out.print(new String(buffer, 0, numberOfChars));
-                                    numberOfChars = 0;
-                                }
-                            }
-
-//                            String inputLine = inputStream.readLine();
-//                            System.out.println(inputLine);
-                        }
-                        catch (Exception e)
-                        {
-                            System.err.println(e.toString());
-                        }
-                    }
-                }
-            });
-
+            serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
+            
+            System.out.println("Successfully set " + comName);
         }
         catch (Exception e)
         {
@@ -132,7 +136,7 @@ public class FrequencyGenerator
             System.err.println(e.toString());
         }
     }
-
+    
     public void SetFrequency(int newFrequency)
     {
         // System.out.println("New frequency is: " + newFrequency);
@@ -227,6 +231,40 @@ public class FrequencyGenerator
     {
         return voltage;
     }
+    
+    @Override
+	public void serialEvent(SerialPortEvent serialPortEvent)
+	{
+		if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE)
+        {
+            try 
+            {
+                int charReceived = 0;
+
+                if ((charReceived = inputStream.read()) > -1)
+                {
+                    buffer[numberOfChars] = (byte) charReceived;
+                    numberOfChars++;
+                    
+                    // TODO debug only ... was + || charReceived == '\r' ||
+                    if (charReceived == '\n' || numberOfChars >= BUFFER_SIZE)
+                    {
+                        // Finish the sequence with a \N to indicate a new line
+                        // System.out.println("\\N");
+                        
+                        // Newline character received or buffer at limit then exit
+                        // System.out.println(new String(buffer, 0, numberOfChars));
+                        System.out.print(new String(buffer, 0, numberOfChars));
+                        numberOfChars = 0;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                System.err.println(e.toString());
+            }
+        }		
+	}
     
     private void SendCommand(String command)
     {

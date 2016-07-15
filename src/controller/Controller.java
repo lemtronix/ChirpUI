@@ -1,7 +1,8 @@
 package controller;
 
-import model.FrequencyGenerator;
+import java.util.HashSet;
 
+import model.FrequencyGenerator;
 import gui.MainFrame;
 
 public class Controller {
@@ -11,9 +12,9 @@ public class Controller {
     
     public Controller()
     {
+    	chirp = new FrequencyGenerator();
+    	
         mainFrame = new MainFrame();
-        chirp = new FrequencyGenerator();
-        
         mainFrame.SetController(this);
     }
     
@@ -24,6 +25,16 @@ public class Controller {
         {
             chirp.AddListener(listener);
         }
+    }
+    
+    public HashSet<String> GetAvailableSerialPorts()
+    {
+    	return chirp.getAvailableSerialPorts();
+    }
+    
+    public void SetSerialPort(String ComPortName)
+    {
+    	chirp.setSerialPort(ComPortName);
     }
     
     public void SetFrequency(int Frequency)

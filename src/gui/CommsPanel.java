@@ -7,6 +7,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -20,7 +23,6 @@ import controller.Controller;
 
 public class CommsPanel extends JPanel implements Controllable {
 
-	private static final int offset = 1;
     private Controller controller;
     private JComboBox<String> commComboBox;
     private JLabel commPortText;
@@ -28,7 +30,7 @@ public class CommsPanel extends JPanel implements Controllable {
     
     public CommsPanel()
     {
-        commPortText = new JLabel("Comm Port:");
+        commPortText = new JLabel("Com Port:");
         autoDetectButton = new JButton("Auto Detect");
         
         autoDetectButton.addActionListener(new ActionListener()
@@ -43,27 +45,7 @@ public class CommsPanel extends JPanel implements Controllable {
         
         // TODO Auto detection of Com ports
         commComboBox = new JComboBox<String>();
-        
-        // TODO selection of com ports is not implemented
-        DefaultComboBoxModel<String> commModel = new DefaultComboBoxModel<String>();
-        commModel.addElement("Com1");
-        commModel.addElement("Com2");
-        commModel.addElement("Com3");
-        commModel.addElement("Com4");
-        
-        commComboBox.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-            	int commPortValue = commComboBox.getSelectedIndex()+offset;
-                System.out.println("Com" + commPortValue +" selected");
-            }
-        });
-        
-        commComboBox.setModel(commModel);
-        commComboBox.setSelectedIndex(0);
-        
+                
         add(commPortText);
         add(commComboBox);
         add(autoDetectButton);
@@ -75,7 +57,33 @@ public class CommsPanel extends JPanel implements Controllable {
         if (controller != null)
         {
             this.controller = controller;
+            
+            // Add all of the available COM ports to the drop down
+            HashSet<String> comNameHashSet = controller.GetAvailableSerialPorts();
+            
+            DefaultComboBoxModel<String> commModel = new DefaultComboBoxModel<String>();
+            
+            if (comNameHashSet != null)
+            {
+            	for (String comName : comNameHashSet) 
+            	{
+            		commModel.addElement(comName);
+            	}
+            }
+            
+            commComboBox.setModel(commModel);
+            commComboBox.setSelectedIndex(-1);
+            
+            commComboBox.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                	String comPortName = commComboBox.getSelectedItem().toString();
+                    System.out.println(comPortName + " selected");
+                    controller.SetSerialPort(comPortName);
+                }
+            });
         }
     }
-
 }
