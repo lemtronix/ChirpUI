@@ -1,7 +1,5 @@
 package controller;
 
-import gui.MainFrame;
-
 import javax.swing.SwingUtilities;
 
 public class Application {

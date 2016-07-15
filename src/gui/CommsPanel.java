@@ -3,16 +3,10 @@
  */
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.function.Consumer;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -43,7 +37,6 @@ public class CommsPanel extends JPanel implements Controllable {
             }
         });
         
-        // TODO Auto detection of Com ports
         commComboBox = new JComboBox<String>();
                 
         add(commPortText);
