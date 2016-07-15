@@ -21,10 +21,7 @@ import gnu.io.CommPortIdentifier;
 
 public class FrequencyGenerator implements SerialPortEventListener
 {
-//    private static final String PORT_NAMES[] = { "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "COM10", "COM11",
-//            "COM12", "COM13", "COM14", "COM15", };
-    private static final String PORT_NAMES[] = { "COM8" };
-    
+
     private HashSet<String> comNameHashSet;
     private HashSet<CommPortIdentifier> comHashSet;
     
@@ -50,68 +47,73 @@ public class FrequencyGenerator implements SerialPortEventListener
 
     public FrequencyGenerator()
     {
-    	comNameHashSet = new HashSet<String>();
-    	comHashSet = new HashSet<CommPortIdentifier>();
-    	
-    	Enumeration<CommPortIdentifier> thePorts = CommPortIdentifier.getPortIdentifiers();
-    	
-    	while (thePorts.hasMoreElements())
-    	{
-    		CommPortIdentifier com = thePorts.nextElement();
+        // TODO instead of assuming the waveform state on startup, this should actually query and get the response back
+        // On startup, the waveform is off
 
-    		// We're only interested in serial ports    		
-    		if (com.getPortType() == CommPortIdentifier.PORT_SERIAL)
-    		{
-    			// Try to open and close the com port, if successful, then add it to the hash set
-    			try
-    			{
-    				CommPort comPort = com.open("CommUtil", 50);
-    				comPort.close();
-    				comNameHashSet.add(com.getName());
-    				comHashSet.add(com);
-    			}
-    			catch (PortInUseException e)
-    			{
-    				System.out.println("Port: " + com.getName() + "is in use.");
-    			}
-    			catch (Exception e)
-    			{
-    				System.err.println("Failed to open port: " + com.getName());
-    				e.printStackTrace();
-    			}
-    		}
-    	}
+        waveform = WaveformType.Off;
+        
+        comNameHashSet = new HashSet<String>();
+        comHashSet = new HashSet<CommPortIdentifier>();
+        
+        Enumeration<CommPortIdentifier> thePorts = CommPortIdentifier.getPortIdentifiers();
+        
+        while (thePorts.hasMoreElements())
+        {
+            CommPortIdentifier com = thePorts.nextElement();
+
+            // We're only interested in serial ports            
+            if (com.getPortType() == CommPortIdentifier.PORT_SERIAL)
+            {
+                // Try to open and close the com port, if successful, then add it to the hash set
+                try
+                {
+                    CommPort comPort = com.open("CommUtil", 50);
+                    comPort.close();
+                    comNameHashSet.add(com.getName());
+                    comHashSet.add(com);
+                }
+                catch (PortInUseException e)
+                {
+                    System.out.println("Port: " + com.getName() + "is in use.");
+                }
+                catch (Exception e)
+                {
+                    System.err.println("Failed to open port: " + com.getName());
+                    e.printStackTrace();
+                }
+            }
+        }
     }
     
     public HashSet<String> getAvailableSerialPorts()
     {
-    	return comNameHashSet;
+        return comNameHashSet;
     }
 
     public void setSerialPort(String comName)
     {
-    	CommPortIdentifier comFound = null;
-    	
-    	Iterator<CommPortIdentifier> itr = comHashSet.iterator();
-    	
-    	// Look for the specified serial port in the has set
-    	while (itr.hasNext())
-    	{
-    		CommPortIdentifier comInHash = itr.next();
-    		
-    		if (comInHash.getName().equals(comName))
-    		{
-    			// We have a string match
-    			comFound = comInHash;
-    			break;
-    		}
-    	}
-    	
-    	if (comFound == null)
-    	{
-    		System.out.println("Could not find COM port.");
-    	}
-    	
+        CommPortIdentifier comFound = null;
+        
+        Iterator<CommPortIdentifier> itr = comHashSet.iterator();
+        
+        // Look for the specified serial port in the has set
+        while (itr.hasNext())
+        {
+            CommPortIdentifier comInHash = itr.next();
+            
+            if (comInHash.getName().equals(comName))
+            {
+                // We have a string match
+                comFound = comInHash;
+                break;
+            }
+        }
+        
+        if (comFound == null)
+        {
+            System.out.println("Could not find COM port.");
+        }
+        
         try
         {
             // open serial port, and use class name for the appName.
@@ -233,9 +235,9 @@ public class FrequencyGenerator implements SerialPortEventListener
     }
     
     @Override
-	public void serialEvent(SerialPortEvent serialPortEvent)
-	{
-		if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE)
+    public void serialEvent(SerialPortEvent serialPortEvent)
+    {
+        if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE)
         {
             try 
             {
@@ -263,8 +265,8 @@ public class FrequencyGenerator implements SerialPortEventListener
             {
                 System.err.println(e.toString());
             }
-        }		
-	}
+        }       
+    }
     
     private void SendCommand(String command)
     {
@@ -285,11 +287,13 @@ public class FrequencyGenerator implements SerialPortEventListener
     
     private void OutputEnable()
     {
+        this.isEnabled = true;
         SendCommand(new String("O"));
     }
     
     private void OutputDisable()
     {
+        this.isEnabled = false;
         SendCommand(new String("o"));
     }
 }

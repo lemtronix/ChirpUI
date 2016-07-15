@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -113,11 +112,23 @@ public class WaveformPanel extends JPanel implements Controllable {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                int amplitudeValue = Integer.parseInt(amplitudeField.getText());
+                float amplitudeValueFloat = 0.0f;
+                
+                try
+                {
+                    amplitudeValueFloat = Float.parseFloat(amplitudeField.getText());
+                }
+                catch (NumberFormatException nfe)
+                {
+                    // If an invalid value was entered, set the output to 0
+                    amplitudeValueFloat = 0.0f;
+                }
                 
                 // Set the slider to the proper value
-                if (amplitudeValue >= AMP_MIN && amplitudeValue <= AMP_MAX)
+                if (amplitudeValueFloat >= (float)AMP_MIN && amplitudeValueFloat <= (float)AMP_MAX)
                 {
+                    // Convert the float back to an int and set the value
+                    int amplitudeValue = (int)(amplitudeValueFloat*AMP_SCALE);
                     amplitudeSlider.setValue(amplitudeValue);
                 }
             }
@@ -137,19 +148,18 @@ public class WaveformPanel extends JPanel implements Controllable {
             {
                 // Update the text box while the slider is moving
                 int SliderValue = amplitudeSlider.getValue();
-                String SliderString = Integer.toString(SliderValue);
+                
+                // Convert the slider value to float for the user
+                float SliderValueFloat = ((float)SliderValue/AMP_SCALE);
+                String SliderString = Float.toString(SliderValueFloat);
                 
                 amplitudeField.setText(SliderString);
                 
                 // But only send the command when no longer adjusting
                 if (amplitudeSlider.getValueIsAdjusting() == false)
                 {
-                    int amplitudeValue = amplitudeSlider.getValue();
-
-                    // TODO debug only
-                    // System.out.println("Sending amplitude command value: " + amplitudeValue);
-                    
-                    SendAmplitude(amplitudeValue);
+                    int amplitudeValueMV = amplitudeSlider.getValue();
+                    SendAmplitude(amplitudeValueMV);
                 }
             }
         });
