@@ -56,4 +56,9 @@ public class Controller {
     {
         return chirp.GetFrequency();
     }
+    
+    public void GetStatus()
+    {
+    	chirp.GetStatus();
+    }
 }

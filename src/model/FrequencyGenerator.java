@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import controller.EventType;
 import controller.FrequencyGeneratorListener;
@@ -36,7 +37,7 @@ public class FrequencyGenerator implements SerialPortEventListener
     private int numberOfChars = 0;
 
     private int frequency;
-    private float voltage;
+    private float amplitude;
     private WaveformType waveform;
     private Boolean isEnabled;
     private FrequencyGeneratorListener singleListener; // TODO is this still used?
@@ -131,6 +132,8 @@ public class FrequencyGenerator implements SerialPortEventListener
             serialPort.notifyOnDataAvailable(true);
             
             System.out.println("Successfully set " + comName);
+            
+            inputStream.reset();
         }
         catch (Exception e)
         {
@@ -163,7 +166,7 @@ public class FrequencyGenerator implements SerialPortEventListener
         
         SendCommand(setVoltageCommand);
         
-        this.voltage = newVoltage;
+        this.amplitude = newVoltage;
     }
     
     public void AddListener(FrequencyGeneratorListener listener)
@@ -206,7 +209,7 @@ public class FrequencyGenerator implements SerialPortEventListener
             case Square:
                 if (previousWaveform != WaveformType.Square)
                 {
-                    SendCommand(new String("wsq"));
+                    SendCommand(new String("wsq2"));
                 }
             break;
             default:
@@ -231,7 +234,32 @@ public class FrequencyGenerator implements SerialPortEventListener
     
     public float GetVoltage()
     {
-        return voltage;
+        return amplitude;
+    }
+    
+    public void GetStatus() 
+    {
+        try 
+        {
+            // Clear the serial buffer
+            inputStream.reset();
+            
+            // Send a status command (currently just an enter key to get the status prompt)
+            SendCommand(new String(""));
+            
+            // use a semaphore to wait for the serialEvent?
+            
+            // serialEvent needs to parse the status string from Chirp
+            
+            // Send an event to any registered listeners that an update has occurred
+            
+            // Menu system processes the event and either knows it needs to get values or the values are contained in the object
+        }
+        catch (IOException e)
+        {
+            System.err.println("Exception attempting to reset the input stream...");
+            e.printStackTrace();
+        }
     }
     
     @Override
@@ -245,18 +273,77 @@ public class FrequencyGenerator implements SerialPortEventListener
 
                 if ((charReceived = inputStream.read()) > -1)
                 {
-                    buffer[numberOfChars] = (byte) charReceived;
-                    numberOfChars++;
+                    // Filter the input...
+                    if (charReceived == '\r')
+                    {
+                        // Ignore these characters
+                    }
+                    else
+                    {
+                        // Otherwise capture the other characters
+                        buffer[numberOfChars] = (byte) charReceived;
+                        numberOfChars++;
+                    }
                     
-                    // TODO debug only ... was + || charReceived == '\r' ||
+                    // If an enter key is pressed or the buffer is exceeded, then process the message
                     if (charReceived == '\n' || numberOfChars >= BUFFER_SIZE)
                     {
-                        // Finish the sequence with a \N to indicate a new line
-                        // System.out.println("\\N");
+                        String message = new String(buffer, 0, numberOfChars);
                         
-                        // Newline character received or buffer at limit then exit
-                        // System.out.println(new String(buffer, 0, numberOfChars));
-                        System.out.print(new String(buffer, 0, numberOfChars));
+                        // Parse message, format is "Q_WAV_F#####_A#####_P###_OFF>" delimiters are '_' or '>'
+                        StringTokenizer st = new StringTokenizer(message, "[_>]");
+                        StringTokenizer stTest = new StringTokenizer(message, "[_>]");
+                        
+                        while (stTest.hasMoreElements())
+                        {
+                            System.out.println(stTest.nextToken());
+                        }
+                        
+                        if (st.countTokens() >= 5)
+                        {
+                            // Then we have a status message
+                            
+                            // If the first token is a Q, then we're in quick mode
+
+                            // Parse Waveform
+                            String waveformString = st.nextToken();
+                            
+                            if (waveformString != null)
+                            {
+                                System.out.print("Waveform: ");
+                                
+                                if (waveformString.equals("SIN"))
+                                {
+                                    System.out.println("Sine");
+                                }
+                                else if (waveformString.equals("TRI"))
+                                {
+                                    System.out.println("Triangle");
+                                }
+                                else if (waveformString.equals("SQ"))
+                                {
+                                    System.out.println("Square");
+                                }
+                                else if (waveformString.equals("SQ2"))
+                                {
+                                    System.out.println("SquareDiv2");
+                                }
+                                else
+                                {
+                                    System.out.println("Unknown");
+                                }
+                            }
+                            
+                            // Parse Frequency
+                            // Parse Amplitude
+                            // Parse Phase?
+                            StringValueParser(st.nextToken(), 'F');
+                            StringValueParser(st.nextToken(), 'A');
+                            StringValueParser(st.nextToken(), 'P');
+
+                            // Parse On or Off
+                        }
+
                         numberOfChars = 0;
                     }
                 }
@@ -283,6 +370,29 @@ public class FrequencyGenerator implements SerialPortEventListener
         {
             System.err.println(e.toString());
         }
+    }
+    
+    private int StringValueParser(String stringWithValueToParse, char characterDelimiter)
+    {
+        int value = 0;
+        
+        if (stringWithValueToParse != null)
+        {
+            System.out.print("Value: ");
+            
+            StringTokenizer token = new StringTokenizer(stringWithValueToParse, String.valueOf(characterDelimiter));
+            
+            try
+            {
+                value = Integer.parseInt(token.nextToken());
+                System.out.println(value);
+            }
+            catch (NumberFormatException nfe)
+            {
+                System.err.println("Parsing Chirp input results in a Number Format Exception");
+            }
+        }
+        return value;
     }
     
     private void OutputEnable()
