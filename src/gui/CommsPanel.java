@@ -27,21 +27,21 @@ public class CommsPanel extends JPanel implements Controllable {
         commPortText = new JLabel("Com Port:");
         autoDetectButton = new JButton("Auto Detect");
         
-        autoDetectButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                // TODO replace with auto detection implementation
-                System.out.println("Auto detection clicked");
-            }
-        });
+//        autoDetectButton.addActionListener(new ActionListener()
+//        {
+//            @Override
+//            public void actionPerformed(ActionEvent e)
+//            {
+//                // TODO replace with auto detection implementation
+//                System.out.println("Auto detection clicked");
+//            }
+//        });
         
         commComboBox = new JComboBox<String>();
                 
         add(commPortText);
         add(commComboBox);
-        add(autoDetectButton);
+//        add(autoDetectButton);
     }
 
     @Override
