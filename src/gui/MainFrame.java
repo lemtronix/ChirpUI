@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -30,6 +32,22 @@ public class MainFrame extends JFrame implements FrequencyGeneratorListener, Con
         
         add(commsPanel, BorderLayout.SOUTH);
         add(waveformPanel, BorderLayout.CENTER);
+        
+        // Handle window close events
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter()
+        {
+            // Execute when the user clicks directly on the red X
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                // JFrame dispose method quits automatically 
+                dispose();
+                
+                // Perform garbage collection at the last possible moment
+                System.gc();
+            }
+        });
         
         setMinimumSize(new Dimension(300, 300));
         setSize(300, 300);
