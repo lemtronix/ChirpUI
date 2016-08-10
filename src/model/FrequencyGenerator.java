@@ -1,35 +1,31 @@
 package model;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import controller.EventType;
 import controller.FrequencyGeneratorListener;
 import controller.GeneratorEvent;
 import controller.WaveformType;
-import gnu.io.CommPort;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
-import gnu.io.CommPortIdentifier;
+import gnu.io.NRSerialPort;
 
 public class FrequencyGenerator implements SerialPortEventListener
 {
 
     private HashSet<String> comNameHashSet;
-    private HashSet<CommPortIdentifier> comHashSet;
     
     // TODO move this into its own class
-    private SerialPort serialPort;
-    private BufferedReader inputStream; // A BufferedReader which will be fed by a InputStreamReader converting the bytes into characters making the displayed results code page independent
-    private OutputStream outputStream; // The output stream to the port
+    private NRSerialPort serialPort;
+    //private SerialPort serialPort;
+    private DataInputStream inputStream; // A BufferedReader which will be fed by a InputStreamReader converting the bytes into characters making the displayed results code page independent
+    private DataOutputStream outputStream; // The output stream to the port
     private static final int TIME_OUT = 2000; // Milliseconds to block while waiting for port open
     private static final int DATA_RATE = 57600; // Default bits per second for COM port.
     private static final int BUFFER_SIZE = 128;
@@ -54,34 +50,25 @@ public class FrequencyGenerator implements SerialPortEventListener
         waveform = WaveformType.Off;
         
         comNameHashSet = new HashSet<String>();
-        comHashSet = new HashSet<CommPortIdentifier>();
         
-        Enumeration<CommPortIdentifier> thePorts = CommPortIdentifier.getPortIdentifiers();
+        Set<String> thePorts = NRSerialPort.getAvailableSerialPorts();
         
-        while (thePorts.hasMoreElements())
+        for (String string : thePorts)
         {
-            CommPortIdentifier com = thePorts.nextElement();
-
-            // We're only interested in serial ports            
-            if (com.getPortType() == CommPortIdentifier.PORT_SERIAL)
+            // Try to open and close the com port, if successful, then add it to the hash set
+            try
             {
-                // Try to open and close the com port, if successful, then add it to the hash set
-                try
+                NRSerialPort serial = new NRSerialPort(string, DATA_RATE);
+                if (serial.connect() == true)
                 {
-                    CommPort comPort = com.open("CommUtil", 50);
-                    comPort.close();
-                    comNameHashSet.add(com.getName());
-                    comHashSet.add(com);
+                    comNameHashSet.add(string);
+                    serial.disconnect();
                 }
-                catch (PortInUseException e)
-                {
-                    System.out.println("Port: " + com.getName() + "is in use.");
-                }
-                catch (Exception e)
-                {
-                    System.err.println("Failed to open port: " + com.getName());
-                    e.printStackTrace();
-                }
+            }
+            catch (Exception e)
+            {
+                System.err.println("Failed to open port: " + string);
+                e.printStackTrace();
             }
         }
     }
@@ -93,16 +80,16 @@ public class FrequencyGenerator implements SerialPortEventListener
 
     public void setSerialPort(String comName)
     {
-        CommPortIdentifier comFound = null;
+        String comFound = null;
         
-        Iterator<CommPortIdentifier> itr = comHashSet.iterator();
+        Iterator<String> itr = comNameHashSet.iterator();
         
         // Look for the specified serial port in the has set
         while (itr.hasNext())
         {
-            CommPortIdentifier comInHash = itr.next();
+            String comInHash = itr.next();
             
-            if (comInHash.getName().equals(comName))
+            if (comInHash.equals(comName))
             {
                 // We have a string match
                 comFound = comInHash;
@@ -118,22 +105,21 @@ public class FrequencyGenerator implements SerialPortEventListener
         try
         {
             // open serial port, and use class name for the appName.
-            serialPort = (SerialPort) comFound.open(this.getClass().getName(), TIME_OUT);
-
+            serialPort = new NRSerialPort(comFound, DATA_RATE);
+            serialPort.connect();
+            
             // set port parameters
-            serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-
+            // serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+            
             // open the streams
-            inputStream = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-            outputStream = serialPort.getOutputStream();
+            inputStream = new DataInputStream(serialPort.getInputStream());
+            outputStream = new DataOutputStream(serialPort.getOutputStream());
 
             // add event listeners
             serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
             
             System.out.println("Successfully set " + comName);
-            
-            inputStream.reset();
         }
         catch (Exception e)
         {
@@ -259,6 +245,15 @@ public class FrequencyGenerator implements SerialPortEventListener
         {
             System.err.println("Exception attempting to reset the input stream...");
             e.printStackTrace();
+        }
+    }
+    
+    public void Close()
+    {
+        if ((serialPort != null) && (serialPort.isConnected() == true))
+        {
+            System.out.println("Closing session...");
+            serialPort.disconnect();
         }
     }
     

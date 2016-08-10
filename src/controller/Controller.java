@@ -12,8 +12,8 @@ public class Controller {
     
     public Controller()
     {
-    	chirp = new FrequencyGenerator();
-    	
+        chirp = new FrequencyGenerator();
+        
         mainFrame = new MainFrame();
         mainFrame.SetController(this);
     }
@@ -29,12 +29,12 @@ public class Controller {
     
     public HashSet<String> GetAvailableSerialPorts()
     {
-    	return chirp.getAvailableSerialPorts();
+        return chirp.getAvailableSerialPorts();
     }
     
     public void SetSerialPort(String ComPortName)
     {
-    	chirp.setSerialPort(ComPortName);
+        chirp.setSerialPort(ComPortName);
     }
     
     public void SetFrequency(int Frequency)
@@ -59,6 +59,11 @@ public class Controller {
     
     public void GetStatus()
     {
-    	chirp.GetStatus();
+        chirp.GetStatus();
+    }
+    
+    public void Close()
+    {
+        chirp.Close();
     }
 }

@@ -41,6 +41,12 @@ public class MainFrame extends JFrame implements FrequencyGeneratorListener, Con
             @Override
             public void windowClosing(WindowEvent e)
             {
+                // Close the serial connection
+                if (controller != null)
+                {
+                    controller.Close();
+                }
+                
                 // JFrame dispose method quits automatically 
                 dispose();
                 
