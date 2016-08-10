@@ -1,0 +1,27 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets {
+	main.java.srcDir 'src/'
+	main.resources.srcDir 'lib/'
+}
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+	manifest {
+		attributes 'Main-Class': 'controller.Application'
+    }
+
+	baseName = project.name + '-all'
+	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+}
+
+//Get dependencies from Maven central repository
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+    compile "com.neuronrobotics:nrjavaserial:3.11.0"
+}
