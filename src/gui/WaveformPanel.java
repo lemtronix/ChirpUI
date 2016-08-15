@@ -39,6 +39,8 @@ import controller.WaveformType;
 
 public class WaveformPanel extends JPanel implements Controllable {
     
+    private static final long serialVersionUID = -99604844658364735L;
+
     private Controller controller;
     
     private static final int FREQ_MIN = 0;

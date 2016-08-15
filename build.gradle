@@ -6,13 +6,23 @@ sourceSets {
 	main.resources.srcDir 'lib/'
 }
 
+allprojects {
+
+   if (project.hasProperty('prodVersion')) {
+     project.version = project.prodVersion
+   } else {
+     project.version = 'Developer-Build'
+   }
+
+} 
+
 //create a single Jar with all dependencies
 task fatJar(type: Jar) {
 	manifest {
 		attributes 'Main-Class': 'controller.Application'
     }
 
-	baseName = project.name + '-all'
+	baseName = project.name
 	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 	with jar
 }

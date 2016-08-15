@@ -22,4 +22,6 @@ import javax.swing.JPanel;
 
 public class StatusPanel extends JPanel {
 
+    private static final long serialVersionUID = -7751546713998407856L;
+
 }

@@ -33,10 +33,12 @@ import controller.Controller;
 
 public class CommsPanel extends JPanel implements Controllable {
 
-    private Controller controller;
-    private JComboBox<String> commComboBox;
-    private JLabel commPortText;
-    private JButton autoDetectButton;
+    private static final long serialVersionUID = 1L;
+    
+    private static Controller controller = null;
+    private JComboBox<String> commComboBox = null;
+    private JLabel commPortText = null;
+    private JButton autoDetectButton = null;
     
     public CommsPanel()
     {
@@ -63,9 +65,10 @@ public class CommsPanel extends JPanel implements Controllable {
     @Override
     public void SetController(Controller controller)
     {
+
         if (controller != null)
         {
-            this.controller = controller;
+            CommsPanel.controller = controller;
             
             // Add all of the available COM ports to the drop down
             HashSet<String> comNameHashSet = controller.GetAvailableSerialPorts();
@@ -74,10 +77,10 @@ public class CommsPanel extends JPanel implements Controllable {
             
             if (comNameHashSet != null)
             {
-            	for (String comName : comNameHashSet) 
-            	{
-            		commModel.addElement(comName);
-            	}
+                for (String comName : comNameHashSet) 
+                {
+                    commModel.addElement(comName);
+                }
             }
             
             commComboBox.setModel(commModel);
@@ -88,9 +91,9 @@ public class CommsPanel extends JPanel implements Controllable {
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                	String comPortName = commComboBox.getSelectedItem().toString();
+                    String comPortName = commComboBox.getSelectedItem().toString();
                     System.out.println(comPortName + " selected");
-                    controller.SetSerialPort(comPortName);
+                    CommsPanel.controller.SetSerialPort(comPortName);
                 }
             });
         }

@@ -32,6 +32,8 @@ import controller.GeneratorEvent;
 
 public class MainFrame extends JFrame implements FrequencyGeneratorListener, Controllable {
 
+    private static final long serialVersionUID = -7135965661054839956L;
+
     private Controller controller;
     
     private CommsPanel commsPanel;

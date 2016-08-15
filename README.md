@@ -7,6 +7,9 @@ See the releases tags above for the latest stable release.
 # Or Build
 Instead of downloading the latest release, you can build the Chirp GUI by using the command `gradlew fatJar`.  The JAR file will be located in  /build/libs/.
 
+# Open in Eclipse
+Gradle will generate an eclipse .project and .classpath file with the command `gradlew eclipse`
+
 # Run
 Make sure you have a Java JRE installed and either:
 
