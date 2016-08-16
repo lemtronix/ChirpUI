@@ -15,4 +15,4 @@ deploy:
   file: "/build/libs/ChirpUI*.jar"
   skip_cleanup: true
   on:
-	tags: true
+    tags: true
