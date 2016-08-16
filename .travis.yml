@@ -1,7 +1,6 @@
 language: java
 
 before_cache:
-  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
@@ -12,12 +11,12 @@ cache:
 before_deploy:
   - export RELEASE_DIR="build/libs"
   - export RELEASE_PKG_FILE=$(ls $RELEASE_DIR/*.jar)
-  - echo "deploying $RELEASE_DIR/$RELEASE_PKG_FILE to GitHub releases"
+  - echo "deploying $RELEASE_PKG_FILE to GitHub releases"
 deploy:
   provider: releases
   api_key: "$GH_TOKEN"
   skip_cleanup: true
   file_glob: true
-  file: "$TRAVIS_BUILD_DIR/RELEASE_DIR/$RELEASE_PKG_FILE"
+  file: "$TRAVIS_BUILD_DIR/$RELEASE_PKG_FILE"
   on:
     tags: true
