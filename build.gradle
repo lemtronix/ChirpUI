@@ -1,33 +1,22 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+// Override the default src and resources directories
 sourceSets {
 	main.java.srcDir 'src/'
 	main.resources.srcDir 'lib/'
 }
 
+// version is passed in with -PprodVersion=...
 allprojects {
-
    if (project.hasProperty('prodVersion')) {
      project.version = project.prodVersion
    } else {
      project.version = 'Developer-Build'
    }
-
 } 
 
-//create a single Jar with all dependencies
-task fatJar(type: Jar) {
-	manifest {
-		attributes 'Main-Class': 'controller.Application'
-    }
-
-	baseName = project.name
-	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-	with jar
-}
-
-//Get dependencies from Maven central repository
+// Get dependencies from Maven central repository
 repositories {
 	mavenCentral()
 }
@@ -35,3 +24,16 @@ repositories {
 dependencies {
     compile "com.neuronrobotics:nrjavaserial:3.11.0"
 }
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+	manifest {
+		attributes 'Main-Class': 'controller.Application'
+    }
+
+	baseName = project.name // project.name includes the name-project.version
+	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+}
+
+jar.finalizedBy(fatJar) // This forces fatJar to run anytime after task jar is called. 
