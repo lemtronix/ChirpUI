@@ -1,9 +1,18 @@
 language: java
 
 before_cache:
+  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+	
+deploy:
+  provider: releases
+  api_key: $GH_TOKEN
+  file: "/build/libs/ChirpUI*.jar"
+  skip_cleanup: true
+  on:
+	tags: true
