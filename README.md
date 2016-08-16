@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lemtronix/ChirpUI.svg?branch=feature-travis_ci)](https://travis-ci.org/lemtronix/ChirpUI)
+
 # ChirpUI
 GUI interface for [Chirp](https://hackaday.io/project/12934-chirp-a-low-cost-function-generator)
 
