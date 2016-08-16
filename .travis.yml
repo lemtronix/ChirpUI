@@ -9,11 +9,11 @@ cache:
     - $HOME/.gradle/wrapper/
 
 before_deploy:
+  - gradlew assemble -PprodVersion=$TRAVIS_TAG
   - export RELEASE_DIR="build/libs"
   - export RELEASE_PKG_FILE=$(ls $RELEASE_DIR/*.jar)
   - echo "deploying $RELEASE_PKG_FILE to GitHub releases"
   - echo "tag detected as $TRAVIS_TAG"
-  - bundle exec gradlew assemble -PprodVersion=$TRAVIS_TAG
 deploy:
   provider: releases
   api_key: "$GH_TOKEN"
