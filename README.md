@@ -7,7 +7,7 @@ GUI interface for [Chirp](https://hackaday.io/project/12934-chirp-a-low-cost-fun
 See the releases tags above for the latest stable release.
 
 # Or Build
-Instead of downloading the latest release, you can build the Chirp GUI by using the command `gradlew fatJar`.  The JAR file will be located in  /build/libs/.
+Instead of downloading the latest release, you can build the Chirp GUI by using the command `gradle assemble`, `gradle jar` or `gradlew fatJar`.  The JAR file will be located in  /build/libs/.
 
 # Open in Eclipse
 Gradle will generate an eclipse .project and .classpath file with the command `gradlew eclipse`
@@ -16,4 +16,5 @@ Gradle will generate an eclipse .project and .classpath file with the command `g
 Make sure you have a Java JRE installed and either:
 
 Option 1: Double click on the .JAR file
-Option 2: Otherwise type `java -jar ChirpGui.jar` to execute
+
+Option 2: Otherwise type `java -jar ChirpGui.jar` at the command line to execute
